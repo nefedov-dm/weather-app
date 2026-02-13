@@ -39,11 +39,17 @@ const emit = defineEmits<{
   'update:model-value': [Partial<WeatherLocation>],
 }>();
 
-const onUpdateLatitude = (value: number) => {
+const onUpdateLatitude = (value: number | null) => {
+  if (value === null) {
+    return;
+  }
   emit('update:model-value', { ...(props.modelValue || {}), latitude: value });
 };
 
-const onUpdateLongitude = (value: number) => {
+const onUpdateLongitude = (value: number | null) => {
+  if (value === null) {
+    return;
+  }
   emit('update:model-value', { ...(props.modelValue || {}), longitude: value });
 };
 </script>

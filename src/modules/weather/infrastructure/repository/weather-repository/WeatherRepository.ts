@@ -171,15 +171,19 @@ export class WeatherRepository implements IWeatherRepository {
       };
     }
 
+    const forecastStartDate = now;
+
+    const historicalEndDate = new Date(now.toISOString());
+    historicalEndDate.setDate(historicalEndDate.getDate() - 1);
     
     return {
       forecast: {
-        startDate: now.toISOString(),
+        startDate: forecastStartDate.toISOString(),
         endDate: timeframe.endDate,
       },
       historical: {
         startDate: timeframe.startDate,
-        endDate: now.toISOString(),
+        endDate: historicalEndDate.toISOString(),
       },
     };
   }

@@ -51,21 +51,29 @@ const data = computed(() => {
     historicalData,
   } = props.dataSet;
 
+  const historicalChartData = historicalData.map((data) => ({
+    x: data.date,
+    y: data.value,
+  })) ?? [];
+  
+  const forecastChartData = forecastData.map((data) => ({
+    x: data.date,
+    y: data.value,
+  })) ?? [];
+
+  if (forecastChartData.length) {
+    historicalChartData.push(forecastChartData[0]!);
+  }
+
   return {
     datasets: [
       {
         label: 'Historical data',
-        data: historicalData.map((data) => ({
-          x: data.date,
-          y: data.value,
-        })) ?? [],
+        data: historicalChartData,
       },
       {
         label: 'Forecast data',
-        data: forecastData.map((data) => ({
-          x: data.date,
-          y: data.value,
-        })) ?? [],
+        data: forecastChartData,
       },
     ],
   };
