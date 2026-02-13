@@ -42,13 +42,6 @@ const dataSet = computed(() => {
 
   return data.value.payload;
 });
-
-watch(
-  filters,
-  (v) => {
-    console.log(v);
-  },
-);
 </script>
 
 <style scoped>

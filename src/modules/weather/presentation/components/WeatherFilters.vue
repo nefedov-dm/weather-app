@@ -1,36 +1,40 @@
 <template>
   <Fieldset legend="Filters">
-    <section class="weather-filters">
+    <Form class="weather-filters">
       <WeatherLocationFilter
-        v-model="locationFilter"
+        :model-value="form.values.location"
+        @update:model-value="form.setFieldValue('location', $event)"
       />
       
       <WeatherTimeframeFilter
-        v-model="timeframeFilter"
+        :model-value="form.values.timeframe"
+        @update:model-value="form.setFieldValue('timeframe', $event)"
       />
   
       <WeatherAggregationFilter
-        v-model="aggregationFilter"
+        :model-value="form.values.aggregation"
+        @update:model-value="form.setFieldValue('aggregation', $event)"
       />
   
       <WeatherAggregationMetricFilter
-        v-model="aggregationMetricFilter"
-        :aggregation="aggregationFilter"
+        :model-value="form.values.aggregationMetric"
+        :aggregation="form.values.aggregation"
+        @update:model-value="form.setFieldValue('aggregationMetric', $event)"
       />
   
       <Button
         class="weather-filters__apply-button"
-        :disabled="!filters"
+        :disabled="!form.meta.value.valid"
         @click="onApply"
       >
         Apply
       </Button>
-    </section>
+    </Form>
   </Fieldset>
 </template>
 
 <script lang="ts" setup generic="T extends WeatherAggregation">
-import { computed, ref } from 'vue';
+import { Form } from 'vee-validate';
 import Button from 'primevue/button';
 import Fieldset from 'primevue/fieldset';
 
@@ -38,11 +42,9 @@ import WeatherLocationFilter from '#modules/weather/presentation/components/Weat
 import WeatherTimeframeFilter from '#modules/weather/presentation/components/WeatherTimeframeFilter.vue';
 import WeatherAggregationFilter from '#modules/weather/presentation/components/WeatherAggregationFilter.vue';
 import WeatherAggregationMetricFilter from '#modules/weather/presentation/components/WeatherAggregationMetricFilter.vue';
+import { useWeatherFiltersForm } from '#modules/weather/presentation/compositions/useWeatherFiltersForm';
 
-import type { WeatherLocation } from '#modules/weather/domain/entities/WeatherLocation';
-import type { WeatherTimeframe } from '#modules/weather/domain/entities/WeatherTimeframe';
 import type { WeatherAggregation } from '#modules/weather/domain/entities/WeatherAggregation';
-import type { WeatherAggregationMetric } from '#modules/weather/domain/entities/WeatherAggregationMetric';
 import type { WeatherFilters } from '#modules/weather/domain/ports/WeatherFilters';
 
 const props = defineProps<{
@@ -50,39 +52,14 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  'update:model-value': [WeatherFilters<T> | undefined],
+  'update:model-value': [WeatherFilters<T>],
 }>();
 
-const locationFilter = ref<Partial<WeatherLocation> | undefined>(props.modelValue?.location);
-const timeframeFilter = ref<Partial<WeatherTimeframe> | undefined>(props.modelValue?.timeframe);
-const aggregationFilter = ref<T | undefined>(props.modelValue?.aggregation);
-const aggregationMetricFilter = ref<WeatherAggregationMetric<T> | undefined>(props.modelValue?.aggregationMetric);
+const form = useWeatherFiltersForm<T>(props.modelValue);
 
-const filters = computed<WeatherFilters<T> | undefined>(() => {
-  const location = locationFilter.value;
-  const timeframe = timeframeFilter.value;
-  const aggregation = aggregationFilter.value;
-  const aggregationMetric = aggregationMetricFilter.value;
-
-  if (!aggregation || !aggregationMetric || !location?.latitude || !location?.longitude || !timeframe?.startDate || !timeframe?.endDate) {
-    return undefined;
-  }
-
-  return {
-    location,
-    timeframe,
-    aggregation,
-    aggregationMetric,
-  } as WeatherFilters<T>;
+const onApply = form.handleSubmit((values) => {
+  emit('update:model-value', { ...values } as WeatherFilters<T>);
 });
-
-const onApply = () => {
-  if (!filters.value) {
-    return;
-  }
-
-  emit('update:model-value', { ...filters.value });
-};
 </script>
   
 <style scoped>
