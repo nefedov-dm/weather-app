@@ -24,7 +24,7 @@
     "vee-validate": "^4.15.1",
     "vue": "^3.5.27",
     "vue-hooks-form": "^0.3.1",
-    "vue-router": "^5.0.1",
+    "vue-router": "^5.0.3",
     "zod": "^4.3.6"
   },
   "devDependencies": {
