@@ -22,7 +22,7 @@
     "openmeteo": "^1.2.3",
     "primevue": "^4.5.4",
     "vee-validate": "^4.15.1",
-    "vue": "^3.5.27",
+    "vue": "^3.5.29",
     "vue-hooks-form": "^0.3.1",
     "vue-router": "^5.0.1",
     "zod": "^4.3.6"
